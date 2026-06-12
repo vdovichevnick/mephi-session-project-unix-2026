@@ -1,0 +1,56 @@
+    1  ip link show
+    2  nmcli connection show
+    3  sudo nmcli connection modify "netplan-enp0s8"   ipv4.method manual   ipv4.addresses 192.168.1.100/24   ipv4.gateway 192.168.1.1   ipv4.dns 8.8.8.8
+    4  sudo nmcli connection down "netplan-enp0s8" && sudo nmcli connection up "netplan-enp0s8"
+    5  sudo hostnamectl set-hostname mephi-2026.domain.local
+    6  ping -c 4 8.8.8.8 > /tmp/network_check.txt
+    7  ping -c 4 192.168.1.1 >> /tmp/network_check.txt
+    8  cd /tmp
+    9  sudo apt update
+   10  apt-get download tcpdump
+   11  sudo dpkg -i tcpdump_*.deb
+   12  sudo apt install -y nginx tcpdump libcap2-bin
+   17  sudo fdisk /dev/sdb
+   18  sudo mkfs.ext4 -L MEPHI_DATA /dev/sdb1
+   19  sudo mkdir -p /data/mephi-web
+   20  echo 'LABEL=MEPHI_DATA  /data/mephi-web  ext4  defaults  0  2' | sudo tee -a /etc/fstab
+   21  sudo systemctl daemon-reload
+   22  sudo mount -a
+   23  sudo systemctl daemon-reload
+   24  sudo systemctl start nginx
+   25  sudo systemctl enable nginx
+   26  sudo systemctl status nginx
+   27  sudo journalctl -u nginx --since "5 minutes ago" > /tmp/nginx_recent_logs.txt
+   28  sudo useradd -m -s /bin/bash mephi-admin
+   29  echo "mephi-admin:P@ssw0rd2026" | sudo chpasswd
+   30  sudo groupadd mephi-devs
+   31  sudo usermod -aG mephi-devs mephi-admin
+   32  sudo chown mephi-admin:mephi-devs /data/mephi-web
+   33  sudo chmod 2775 /data/mephi-web
+   34  echo "AppArmor enforcing (Ubuntu default, SELinux not applicable)" > ~/selinux_status.txt
+   35  sudo aa-status | head -3 >> ~/selinux_status.txt
+   36  ls -Zd /data/mephi-web > ~/file_contexts.txt
+   37  sudo nano /etc/nginx/sites-available/mephi
+   38  sudo ln -s /etc/nginx/sites-available/mephi /etc/nginx/sites-enabled/
+   39  sudo rm /etc/nginx/sites-enabled/default
+   40  sudo nginx -t
+   41  sudo systemctl reload nginx
+   42  sudo chmod -s /usr/bin/tcpdump
+   42  sudo setcap cap_net_raw,cap_net_admin+ep /usr/bin/tcpdump
+   43  getcap /usr/bin/tcpdump > ~/tcpdump_capabilities.txt
+   44  sudo apt install -y openssh-server
+   45  sudo systemctl enable ssh
+   46  sudo systemctl start ssh
+   47  echo "root" | sudo tee /etc/ssh/denied_users
+   48  sudo nano /etc/ssh/sshd_config
+   49  echo "PermitRootLogin no" | sudo tee -a /etc/ssh/sshd_config
+   50  sudo nano /etc/pam.d/sshd
+   51  sudo nano /etc/pam.d/login
+   52  sudo systemctl restart ssh
+   53  sudo apt install curl
+   54  su - mephi-admin
+   55  echo "Hello from Student: 369936" > /data/mephi-web/index.html
+   56  sudo nano /etc/nginx/sites-available/mephi
+   57  curl http://localhost
+   58  curl http://192.168.1.100
+   59  history > ~/project_history.txt

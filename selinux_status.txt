@@ -1,0 +1,4 @@
+AppArmor enforcing (Ubuntu default, SELinux not applicable)
+apparmor module is loaded.
+228 profiles are loaded.
+150 profiles are in enforce mode.

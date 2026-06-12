@@ -1,0 +1,5 @@
+# SELinux not available on Ubuntu 25.10 (AppArmor used instead)
+# AppArmor profile for nginx:
+--- /data/mephi-web permissions ---
+drwxrwsr-x 3 mephi-admin mephi-devs 4096 Jun 13 01:07 /data/mephi-web
+nginx: running without AppArmor profile (unconfined)
